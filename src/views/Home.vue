@@ -5,7 +5,6 @@
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <h2>{{title}}</h2>
-
             <!-- TOOD -->
             <el-form ref="room" label-width="80px">
               <el-form-item label="房间名称">
