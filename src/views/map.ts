@@ -1,16 +1,17 @@
 import { Room } from "../types";
 
 export function draw(element: HTMLCanvasElement, data: Room[]) {
-  if (!element) {
-    return;
-  }
-  resizeCanvas(element);
   const ctx = element.getContext("2d");
   if (!ctx) {
     return;
   }
 
   data.map((room: Room) => drawRoom(ctx, room));
+}
+
+export function resizeCanvas(element: HTMLCanvasElement) {
+  element.height = element.parentElement!.offsetHeight;
+  element.width = element.parentElement!.offsetWidth;
 }
 
 function drawRoom(ctx: CanvasRenderingContext2D, room: Room) {
@@ -26,9 +27,4 @@ function drawRoom(ctx: CanvasRenderingContext2D, room: Room) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(room.name, room.start.x + width / 2, room.start.y + height / 2);
-}
-
-function resizeCanvas(element: HTMLCanvasElement) {
-  element.height = element.parentElement!.offsetHeight;
-  element.width = element.parentElement!.offsetWidth;
 }

@@ -76,13 +76,14 @@ import { Component, Vue } from "vue-property-decorator";
 import Room from "../model/room";
 import Point from "../model/point";
 import { addRoom, queryRoom } from "../api/company";
-import { draw } from "./map";
+import { draw, resizeCanvas } from "./map";
 
 @Component
 export default class Home extends Vue {
   xmax: number = 800;
   ymax: number = 600;
   zhoufan: string = "zhoufan";
+  canvas?: HTMLCanvasElement;
   room: Room = {
     start: { x: 0, y: 0 },
     end: { x: 0, y: 0 },
@@ -93,13 +94,16 @@ export default class Home extends Vue {
     name: [{ required: true, message: "房间名称必填的", trigger: "blur" }]
   };
   mounted() {
+    this.canvas = document.getElementById("room-map") as HTMLCanvasElement;
+    resizeCanvas(this.canvas);
     this.reDraw();
   }
   async reDraw() {
     const roomList = await queryRoom();
-    console.log(roomList);
-    const element = document.getElementById("room-map") as HTMLCanvasElement;
-    draw(element, roomList);
+    if (!this.canvas) {
+      return;
+    }
+    draw(this.canvas, roomList);
   }
   submitForm() {
     let el: any = this.$refs.room;
