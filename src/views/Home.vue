@@ -58,13 +58,25 @@
         </div>
       </el-col>
     </el-row>
+    <el-row :gutter="20" class="map">
+      <div class="grid-content bg-purple">
+        <el-card class="map-card">
+          <div class="map-container">
+            <canvas id="room-map"></canvas>
+          </div>
+        </el-card>
+      </div>
+    </el-row>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Room from "../model/room";
+import Point from "../model/point";
+
 import { addRoom } from "../api/company";
+import { draw } from "./map";
 
 @Component
 export default class Home extends Vue {
@@ -80,6 +92,17 @@ export default class Home extends Vue {
   addRoomRules = {
     name: [{ required: true, message: "房间名称必填的", trigger: "blur" }]
   };
+  mounted() {
+    const element = <HTMLCanvasElement>document.getElementById("room-map");
+    let room: Room = {
+      start: { x: 10, y: 10 },
+      end: { x: 100, y: 150 },
+      limit: 8,
+      name: "test"
+    };
+
+    draw(element, [room]);
+  }
   submitForm() {
     let el: any = this.$refs.room;
     el.validate((valid: boolean) => {
@@ -98,3 +121,23 @@ export default class Home extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+.map {
+  padding-top: 20px;
+
+  #room-map {
+    background-color: #f4f4f4;
+  }
+  .map-card {
+    width: 840px;
+    height: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .map-container {
+    width: 800px;
+    height: 600px;
+  }
+}
+</style>
+
