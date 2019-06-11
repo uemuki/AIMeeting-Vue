@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable -->
   <div class="home">
     <el-row :gutter="20">
       <el-col :span="12" :offset="6">
@@ -74,14 +75,13 @@
 import { Component, Vue } from "vue-property-decorator";
 import Room from "../model/room";
 import Point from "../model/point";
-
-import { addRoom } from "../api/company";
+import { addRoom, queryRoom } from "../api/company";
 import { draw } from "./map";
 
 @Component
 export default class Home extends Vue {
-  xmax: number = 100;
-  ymax: number = 100;
+  xmax: number = 800;
+  ymax: number = 600;
   zhoufan: string = "zhoufan";
   room: Room = {
     start: { x: 0, y: 0 },
@@ -93,19 +93,17 @@ export default class Home extends Vue {
     name: [{ required: true, message: "房间名称必填的", trigger: "blur" }]
   };
   mounted() {
-    const element = <HTMLCanvasElement>document.getElementById("room-map");
-    let room: Room = {
-      start: { x: 10, y: 10 },
-      end: { x: 100, y: 150 },
-      limit: 8,
-      name: "test"
-    };
-
-    draw(element, [room]);
+    this.reDraw();
+  }
+  async reDraw() {
+    const roomList = await queryRoom();
+    console.log(roomList);
+    const element = document.getElementById("room-map") as HTMLCanvasElement;
+    draw(element, roomList);
   }
   submitForm() {
     let el: any = this.$refs.room;
-    el.validate((valid: boolean) => {
+    el.validate(async (valid: boolean) => {
       if (valid) {
         if (
           this.room.end.x <= this.room.start.x ||
@@ -114,8 +112,8 @@ export default class Home extends Vue {
           this.$message.error("结束位置必须大于开始位置");
           return;
         }
-        addRoom(this.room);
-        el.resetField();
+        await addRoom(this.room);
+        this.reDraw();
       }
     });
   }
@@ -140,4 +138,3 @@ export default class Home extends Vue {
   }
 }
 </style>
-

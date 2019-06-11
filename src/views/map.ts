@@ -1,8 +1,6 @@
-import Room from "@/model/room";
+import { Room } from "../types";
 
-// import { Room } from "@/types";
-
-export function draw(element: HTMLCanvasElement, data: [Room]) {
+export function draw(element: HTMLCanvasElement, data: Room[]) {
   if (!element) {
     return;
   }
@@ -20,7 +18,9 @@ function drawRoom(ctx: CanvasRenderingContext2D, room: Room) {
   let height: number = room.end.y - room.start.y;
 
   ctx.fillStyle = "#409EFF";
-  ctx.fillRect(room.start.x, room.start.y, room.end.x, room.end.y);
+  ctx.fillRect(room.start.x, room.start.y, width, height);
+  ctx.fillStyle = "#000";
+  ctx.strokeRect(room.start.x, room.start.y, width, height);
   ctx.font = "24px serif";
   ctx.fillStyle = "#FFFFFF";
   ctx.textAlign = "center";
