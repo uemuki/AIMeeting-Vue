@@ -53,7 +53,7 @@ import { Room, Point } from "../model/room";
 export default class Home extends Vue {
   tableData: Room[] = [];
   async queryData() {
-    this.tableData = await query();
+    await query();
   }
 }
 </script>

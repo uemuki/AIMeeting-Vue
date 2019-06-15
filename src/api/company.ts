@@ -18,7 +18,7 @@ export async function addRoom(room: Room) {
 export async function query() {
   //TODO 调用自己的服务
   const res = await axios.get("/api/company/query");
-  return res && res.data;
+  return t(res);
 }
 
 function t(res: any) {
