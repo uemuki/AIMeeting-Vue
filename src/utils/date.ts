@@ -83,6 +83,12 @@ export default class DateUtil {
     }
     return dt;
   }
+
+  compare(dtFir: string | number | Date, dtSec: string | number | Date) {
+    const dtFirT = this.parseDate(dtFir);
+    const dtSecT = this.parseDate(dtSec);
+    return dtFirT > dtSecT;
+  }
 }
 
 interface DateMap {

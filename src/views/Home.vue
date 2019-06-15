@@ -7,7 +7,7 @@
       >
         <div class="grid-content bg-purple">
           <el-card class="box-card">
-            <h2>{{title}}</h2>
+            <h2 class="title">{{title}}</h2>
             <!-- TOOD -->
             <el-form
               ref="room"
@@ -28,7 +28,13 @@
               >
                 <el-col :span="11">
                   <el-form-item prop="position">
-                    <el-input v-model="ruleForm.start.x"></el-input>
+                    <el-input-number
+                      v-model="ruleForm.start.x"
+                      @change="handleChange"
+                      :min="0"
+                      :max="40"
+                      label="描述文字"
+                    ></el-input-number>
                   </el-form-item>
                 </el-col>
                 <el-col
@@ -37,7 +43,13 @@
                 >-</el-col>
                 <el-col :span="11">
                   <el-form-item prop="position">
-                    <el-input v-model="ruleForm.start.y"></el-input>
+                    <el-input-number
+                      v-model="ruleForm.start.y"
+                      @change="handleChange"
+                      :min="0"
+                      :max="40"
+                      label="描述文字"
+                    ></el-input-number>
                   </el-form-item>
                 </el-col>
               </el-form-item>
@@ -47,7 +59,13 @@
               >
                 <el-col :span="11">
                   <el-form-item prop="position">
-                    <el-input v-model="ruleForm.end.x"></el-input>
+                    <el-input-number
+                      v-model="ruleForm.end.x"
+                      @change="handleChange"
+                      :min="0"
+                      :max="40"
+                      label="描述文字"
+                    ></el-input-number>
                   </el-form-item>
                 </el-col>
                 <el-col
@@ -56,7 +74,13 @@
                 >-</el-col>
                 <el-col :span="11">
                   <el-form-item prop="position">
-                    <el-input v-model="ruleForm.end.y"></el-input>
+                    <el-input-number
+                      v-model="ruleForm.end.y"
+                      @change="handleChange"
+                      :min="0"
+                      :max="40"
+                      label="描述文字"
+                    ></el-input-number>
                   </el-form-item>
                 </el-col>
               </el-form-item>
@@ -73,16 +97,22 @@
                   :picker-options="pickerOptions"
                 >
                 </el-date-picker>
-                <!-- <el-input v-model="ruleForm.duration"></el-input> -->
               </el-form-item>
               <el-form-item
                 label="使用时长"
                 prop="duration"
+                class="duration"
               >
-                <div>{{ruleForm.limit}}</div>
+                <el-input-number
+                  v-model="ruleForm.duration"
+                  @change="handleChange"
+                  :min="1"
+                  :max="180"
+                  label="描述文字"
+                ></el-input-number>
               </el-form-item>
               <el-form-item label="限制人数">
-                <div>{{ruleForm.limit}}</div>
+                <div class="limit">{{ruleForm.limit}}</div>
               </el-form-item>
               <el-form-item>
                 <el-button
@@ -100,7 +130,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { addRoom, query } from "../api/company";
+import { addRoom } from "../api/company";
 import { Room, Point } from "../model/room";
 import Result from "../model/result";
 import DateUtil from "../utils/date";
@@ -153,42 +183,45 @@ export default class Home extends Vue {
       { required: true, message: "请输入会议室名称", trigger: "blur" },
       { min: 1, max: 20, message: "长度在 1 到 20 个字符", trigger: "blur" }
     ]
-    // position: [
-    //   {pattern:/^\d{1,3}$/,
-    //     required: true,
-    //     message: "请输入内容",
-    //     trigger: "blur"
-    //   }
-    // ]
   };
   // @Prop() name!: string;
+  handleChange() {}
   submitForm() {
     let el: any = this.$refs.room;
     el.validate(async (valid: boolean) => {
       if (valid) {
         //TODO 调用接口
-        const start = this.ruleForm.start;
-        const end = this.ruleForm.end;
-        // if (this.ruleForm.duration !== undefined)
-        //   this.ruleForm.duration = this.ruleForm.duration.map((dt: string) => {
-        //     return new DateUtil().formatToLocal(dt, "YYYY-MM-DD hh:mm");
-        //   });
-        // console.log(this.ruleForm.duration);
-
-        if (start.x < end.x && start.y < end.y) {
-          this.ruleForm.limit = (end.x - start.x) * (end.y - start.y);
-          this.ruleForm.gmt_created = new Date().toJSON();
-
-          // const res = await addRoom(this.ruleForm);
-          // console.log(res);
-        } else {
-          this.$message.error("房间结束位置不能小于或等于开始位置");
-        }
+        this.ruleForm.gmt_created = new Date().toJSON();
+        const {
+          start,
+          end,
+          start_time: startT,
+          gmt_created: createT
+        } = this.ruleForm;
+        this.add(start, end, startT as string, createT as string);
       } else {
         console.log("error submit!!");
         return false;
       }
     });
+  }
+  async add(start: Point, end: Point, startT: string, createT: string) {
+    if (start.x < end.x && start.y < end.y) {
+      this.ruleForm.limit = (end.x - start.x) * (end.y - start.y);
+      let res;
+      if (startT) {
+        if (new DateUtil().compare(startT, createT)) {
+          res = await addRoom(this.ruleForm);
+        } else {
+          this.$message.error("使用时间不能先于创建时间");
+        }
+      } else {
+        res = await addRoom(this.ruleForm);
+      }
+      console.log(res);
+    } else {
+      this.$message.error("房间结束位置不能小于或等于开始位置");
+    }
   }
   // async aApi() {
   //   console.log('------1');
@@ -201,14 +234,41 @@ export default class Home extends Vue {
   //   console.log('------3');
   //   query();
   // }
+
+  // const t = new DateUtil().formatToLocal(this.ruleForm.start_time as string, "YYYY-MM-DD hh:mm")
+  // console.log(this.ruleForm);
+  // console.log(t);
 }
 </script>
 
 <style lang="scss" scoped>
 .home {
+  .box-card {
+    .title {
+      padding-bottom: 20px;
+    }
+    .limit {
+      width: 100%;
+      margin: 0 auto;
+      border-radius: 4px;
+      border: 1px solid #dcdfe6;
+      background-color: #f5f7fa;
+    }
+  }
   .name .el-input {
     box-sizing: border-box;
-    padding: 0 10px;
+  }
+  .el-date-editor.el-input {
+    width: 100%;
+  }
+  .el-input__prefix {
+    left: 12px;
+  }
+  .el-input-number {
+    width: 100%;
+  }
+  .el-col.el-col-11 {
+    padding: 0 !important;
   }
 }
 </style>

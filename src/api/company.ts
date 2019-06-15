@@ -11,13 +11,20 @@ export async function vueApiTest(): Promise<any> {
 }
 
 export async function addRoom(room: Room) {
-  //TODO 调用自己的服务
-  const res: Result = await axios.post("/api/company/addRoom", room);
-  console.log("vue-api-addroom", res);
-  return res;
+  const res = await axios.post("/api/company/addRoom", room);
+  return t(res);
 }
 
 export async function query() {
   //TODO 调用自己的服务
   const res = await axios.get("/api/company/query");
+  return res && res.data;
+}
+
+function t(res: any) {
+  if (res) {
+    const resT: Result = res.data;
+    return resT.isSuccess && resT.data;
+  }
+  return false;
 }
