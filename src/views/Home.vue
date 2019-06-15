@@ -111,16 +111,17 @@
                   label="描述文字"
                 ></el-input-number>
               </el-form-item>
-              <el-form-item label="限制人数">
+              <el-form-item label="容纳人数">
                 <div class="limit">{{ruleForm.limit}}</div>
               </el-form-item>
-              <el-form-item>
-                <el-button
-                  type="warning"
-                  @click="submitForm()"
-                >立即创建</el-button>
-              </el-form-item>
+              <!-- <el-form-item>
+              </el-form-item> -->
             </el-form>
+            <div class="hint">温馨提示：公司房间大小不能超过40 * 40</div>
+            <el-button
+              type="warning"
+              @click="submitForm()"
+            >立即创建</el-button>
           </el-card>
         </div>
       </el-col>
@@ -129,43 +130,43 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { addRoom } from "../api/company";
-import { Room, Point } from "../model/room";
-import Result from "../model/result";
-import DateUtil from "../utils/date";
+import { Component, Vue } from 'vue-property-decorator';
+import { addRoom } from '../api/company';
+import { Room, Point } from '../model/room';
+import Result from '../model/result';
+import DateUtil from '../utils/date';
 
 @Component
 export default class Home extends Vue {
-  title: string = "创建会议室";
+  title: string = '创建会议室';
   pickerOptions = {
     shortcuts: [
       {
-        text: "今天",
+        text: '今天',
         onClick(picker: any) {
-          picker.$emit("pick", new Date());
+          picker.$emit('pick', new Date());
         }
       },
       {
-        text: "昨天",
+        text: '昨天',
         onClick(picker: any) {
           const date = new Date();
           date.setTime(date.getTime() - 3600 * 1000 * 24);
-          picker.$emit("pick", date);
+          picker.$emit('pick', date);
         }
       },
       {
-        text: "一周前",
+        text: '一周前',
         onClick(picker: any) {
           const date = new Date();
           date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-          picker.$emit("pick", date);
+          picker.$emit('pick', date);
         }
       }
     ]
   };
   ruleForm: Room = {
-    name: "",
+    name: '',
     start: {
       x: 0,
       y: 0
@@ -175,13 +176,13 @@ export default class Home extends Vue {
       y: 0
     },
     limit: 0,
-    start_time: "",
+    start_time: '',
     duration: 0
   };
   rules: Object = {
     name: [
-      { required: true, message: "请输入会议室名称", trigger: "blur" },
-      { min: 1, max: 20, message: "长度在 1 到 20 个字符", trigger: "blur" }
+      { required: true, message: '请输入会议室名称', trigger: 'blur' },
+      { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
     ]
   };
   // @Prop() name!: string;
@@ -200,7 +201,7 @@ export default class Home extends Vue {
         } = this.ruleForm;
         this.add(start, end, startT as string, createT as string);
       } else {
-        console.log("error submit!!");
+        console.log('error submit!!');
         return false;
       }
     });
@@ -213,14 +214,17 @@ export default class Home extends Vue {
         if (new DateUtil().compare(startT, createT)) {
           res = await addRoom(this.ruleForm);
         } else {
-          this.$message.error("使用时间不能先于创建时间");
+          this.$message.error('使用时间不能先于创建时间');
         }
       } else {
         res = await addRoom(this.ruleForm);
       }
+      (<Result>res).isSuccess
+        ? this.$message('创建成功')
+        : this.$message.error(res.message);
       console.log(res);
     } else {
-      this.$message.error("房间结束位置不能小于或等于开始位置");
+      this.$message.error('房间结束位置不能小于或等于开始位置');
     }
   }
   // async aApi() {
@@ -253,6 +257,14 @@ export default class Home extends Vue {
       border-radius: 4px;
       border: 1px solid #dcdfe6;
       background-color: #f5f7fa;
+    }
+    .hint {
+      text-align: left;
+      color: #909399;
+      font-size: 12px;
+      line-height: 1;
+      padding-left: 12px;
+      padding-bottom: 20px;
     }
   }
   .name .el-input {

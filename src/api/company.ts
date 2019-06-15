@@ -12,19 +12,11 @@ export async function vueApiTest(): Promise<any> {
 
 export async function addRoom(room: Room) {
   const res = await axios.post("/api/company/addRoom", room);
-  return t(res);
+  return res && res.data;
 }
 
 export async function query() {
   //TODO 调用自己的服务
   const res = await axios.get("/api/company/query");
-  return t(res);
-}
-
-function t(res: any) {
-  if (res) {
-    const resT: Result = res.data;
-    return resT.isSuccess && resT.data;
-  }
-  return false;
+  return res && res.data;
 }
