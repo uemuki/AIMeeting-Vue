@@ -4,8 +4,10 @@
       <el-tab-pane label="list">
         <RoomTable :table-data="handle" />
       </el-tab-pane>
-      <el-tab-pane label="Map">
-        <!-- <RoomMap :table-data="tableData" /> -->
+      <!-- <el-tab-pane label="Map">
+        <RoomMap :table-data="tableData" />
+      </el-tab-pane> -->
+      <el-tab-pane label="Mapx">
         <RoomMapX :table-data="tableData" />
       </el-tab-pane>
     </el-tabs>
@@ -41,8 +43,8 @@ export default class Home extends Vue {
   get handle() {
     const list: any[] = [];
     this.tableData.map(r => {
-      const st = this.dateUtil.formatToLocal(<string>r.start_time) || '-';
-      const gt = this.dateUtil.formatToLocal(<string>r.gmt_created) || '-';
+      const st = r.start_time ? this.dateUtil.formatToLocal(<string>r.start_time) : '-';
+      const gt = r.gmt_created ? this.dateUtil.formatToLocal(<string>r.gmt_created) : '-';
       list.push({
         name: r.name,
         start_time: st,
