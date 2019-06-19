@@ -1,11 +1,14 @@
 <template>
   <div class="roomMap">
-    <canvas ref="canvas" id="canvas"></canvas>
+    <canvas
+      ref="canvas"
+      id="canvas"
+    ></canvas>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { Room, Point } from '../../model/room';
 
 @Component
@@ -14,15 +17,22 @@ export default class RoomMap extends Vue {
   canvas: HTMLCanvasElement | null = null;
   ctx: CanvasRenderingContext2D | null = null;
   mounted() {
+    this.canvas = <HTMLCanvasElement>this.$refs.canvas;
+    this.ctx = this.canvas.getContext('2d');
+    // this.axios(); 
+    // this.draw();
+  }
+  @Watch('tableData')
+  watchCount(newVal: Room[]) {
     this.draw();
   }
   draw() {
-    this.canvas = <HTMLCanvasElement>this.$refs.canvas;
-    this.ctx = this.canvas.getContext('2d');
-    this.tableData.map(p => this.drawRoom(p));
+    console.log('draw', this.tableData.length);
+    if (this.canvas && this.ctx) this.tableData.map(p => this.drawRoom(p));
   }
   axios() {
     if (this.canvas && this.ctx) {
+      console.log('axios-2');
       this.ctx.strokeStyle = '#09f';
       // 横线
       for (let i = 0; i < this.canvas.clientHeight / 10; i++) {
@@ -38,28 +48,9 @@ export default class RoomMap extends Vue {
         this.ctx.lineTo(j * 10 + 0.5, this.canvas.clientHeight + 0.5);
         this.ctx.stroke();
       }
-      this.ctx.beginPath();
-      this.ctx.moveTo(this.canvas.clientWidth - 0.5, 0);
-      this.ctx.lineTo(
-        this.canvas.clientWidth - 0.5,
-        this.canvas.clientHeight - 0.5
-      );
-      this.ctx.stroke();
-
-      this.ctx.beginPath();
-      this.ctx.moveTo(0, this.canvas.clientHeight - 0.5);
-      this.ctx.lineTo(
-        this.canvas.clientWidth - 0.5,
-        this.canvas.clientHeight - 0.5
-      );
-      this.ctx.stroke();
     }
   }
   drawRoom(aroom: Room) {
-    aroom.start.x = aroom.start.x * 3;
-    aroom.start.y = aroom.start.y * 3;
-    aroom.end.x = aroom.end.x * 3;
-    aroom.end.y = aroom.end.y * 3;
     if (this.ctx) {
       const ctx = this.ctx;
 
@@ -69,15 +60,16 @@ export default class RoomMap extends Vue {
       };
 
       ctx.lineWidth = 1;
+      ctx.lineJoin = 'round';
       ctx.fillStyle = '#000';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
       ctx.beginPath();
-      ctx.moveTo(aroom.start.x, aroom.start.y);
-      ctx.lineTo(aroom.end.x, aroom.start.y);
-      ctx.lineTo(aroom.end.x, aroom.end.y);
-      ctx.lineTo(aroom.start.x, aroom.end.y);
+      ctx.moveTo(aroom.start.x + 0.5, aroom.start.y + 0.5);
+      ctx.lineTo(aroom.end.x + 0.5, aroom.start.y + 0.5);
+      ctx.lineTo(aroom.end.x + 0.5, aroom.end.y + 0.5);
+      ctx.lineTo(aroom.start.x + 0.5, aroom.end.y + 0.5);
       // ctx.moveTo(aroom.start.x + 0.5, aroom.start.y + 0.5);
       // ctx.lineTo(aroom.end.x + 0.5, aroom.start.y + 0.5);
       // ctx.lineTo(aroom.end.x + 0.5, aroom.end.y + 0.5);
@@ -99,6 +91,6 @@ export default class RoomMap extends Vue {
 <style lang="scss" scoped>
 #canvas {
   border: 1px solid #09f;
-  width: 600px;
+  // width: 600px;
 }
 </style>
