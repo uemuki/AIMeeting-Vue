@@ -1,15 +1,15 @@
 <template>
   <div class="rooms">
     <el-tabs type="border-card">
+      <el-tab-pane label="Mapx">
+        <RoomMapX :table-data="tableData" />
+      </el-tab-pane>
       <el-tab-pane label="list">
         <RoomTable :table-data="handle" />
       </el-tab-pane>
       <!-- <el-tab-pane label="Map">
         <RoomMap :table-data="tableData" />
       </el-tab-pane> -->
-      <el-tab-pane label="Mapx">
-        <RoomMapX :table-data="tableData" />
-      </el-tab-pane>
     </el-tabs>
   </div>
 </template>

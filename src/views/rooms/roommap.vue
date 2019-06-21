@@ -27,7 +27,7 @@ import { Room, Point } from "../../model/room";
 @Component
 export default class RoomMap extends Vue {
   @Prop() tableData!: Room[];
-  company: number[] = [40, 40];
+  company: number[] = [50, 50];
   room: Room = {
     start: { x: 0, y: 0 },
     end: { x: 2, y: 3 },
@@ -58,8 +58,8 @@ export default class RoomMap extends Vue {
   margin: 0 auto;
   display: flex;
   .xAxios-item {
-    width: 10px;
-    height: 10px;
+    width: 5px;
+    height: 5px;
     // margin: 1px;
     color: #fff;
     background-color: #e6a23c;

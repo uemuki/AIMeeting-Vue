@@ -32,7 +32,7 @@
                       v-model="ruleForm.start.x"
                       @change="handleChange"
                       :min="0"
-                      :max="300"
+                      :max="maxX"
                       label="描述文字"
                     ></el-input-number>
                   </el-form-item>
@@ -47,7 +47,7 @@
                       v-model="ruleForm.start.y"
                       @change="handleChange"
                       :min="0"
-                      :max="150"
+                      :max="maxY"
                       label="描述文字"
                     ></el-input-number>
                   </el-form-item>
@@ -63,7 +63,7 @@
                       v-model="ruleForm.end.x"
                       @change="handleChange"
                       :min="0"
-                      :max="300"
+                      :max="maxX"
                       label="描述文字"
                     ></el-input-number>
                   </el-form-item>
@@ -78,7 +78,7 @@
                       v-model="ruleForm.end.y"
                       @change="handleChange"
                       :min="0"
-                      :max="150"
+                      :max="maxY"
                       label="描述文字"
                     ></el-input-number>
                   </el-form-item>
@@ -117,7 +117,7 @@
               <!-- <el-form-item>
               </el-form-item> -->
             </el-form>
-            <div class="hint">温馨提示：公司房间大小不能超过300 * 150</div>
+            <div class="hint">温馨提示：公司房间大小不能超过{{maxX}} * {{maxY}}</div>
             <el-button
               type="warning"
               @click="submitForm()"
@@ -138,6 +138,8 @@ import DateUtil from '../utils/date';
 
 @Component
 export default class Home extends Vue {
+  maxX: number = 200;
+  maxY: number = 200;
   title: string = '创建会议室';
   pickerOptions = {
     shortcuts: [
